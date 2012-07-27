@@ -47,7 +47,7 @@ public class ListingContent  extends Activity {
 	        tv.setText(app.getState() + " - " + app.getCity() + "\n");
 
 //	        ImageView Image01 = new ImageView(this);
-	        ImageView Image01 = (ImageView) findViewById(R.id.imageView1);
+//	        ImageView Image01 = (ImageView) findViewById(R.id.imageView1);
 	        Source source = getSource();
 
 	        String userbody = source.getElementById("userbody").getContent().toString();
@@ -65,20 +65,57 @@ public class ListingContent  extends Activity {
 	    				images = source.getElementById("userbody").getAllElementsByClass("iw").get(0).getAllStartTags("img");
 	    				Iterator<StartTag> it = images.iterator();
 	    				int i = 0;
-//	    				while (it.hasNext()) {
+	    				while (it.hasNext()) {
 //	    					tv.append(it.next().toString() + "\n");      
 	    					String url = it.next().getAttributeValue("src");
 	    					tv.append(url);
 	    					Drawable image =ImageOperations(this,url);
 	    					if( image == null)
 	    						tv.append("this fucked up");
+	    					
+	    					switch(i){
+	    					case 0:
+		    					ImageView Image01 = (ImageView) findViewById(R.id.imageView1);
+		    					Image01.setImageDrawable(image);
+	    						break;
+	    					case 1:
+		    					ImageView Image02 = (ImageView) findViewById(R.id.imageView2);
+		    					Image02.setImageDrawable(image);
+	    						break;
+	    					case 2:
+		    					ImageView Image03 = (ImageView) findViewById(R.id.imageView3);
+		    					Image03.setImageDrawable(image);
+	    						break;
+	    					case 3:
+		    					ImageView Image04 = (ImageView) findViewById(R.id.imageView4);
+		    					Image04.setImageDrawable(image);
+	    						break;
+	    					case 4:
+		    					ImageView Image05 = (ImageView) findViewById(R.id.imageView5);
+		    					Image05.setImageDrawable(image);
+	    						break;
+	    					case 5:
+		    					ImageView Image06 = (ImageView) findViewById(R.id.imageView6);
+		    					Image06.setImageDrawable(image);
+	    						break;
+	    					case 6:
+		    					ImageView Image07 = (ImageView) findViewById(R.id.imageView7);
+		    					Image07.setImageDrawable(image);
+	    						break;
+	    					case 7:
+		    					ImageView Image08 = (ImageView) findViewById(R.id.imageView8);
+		    					Image08.setImageDrawable(image);
+	    						break;    					
+	    					}
+	    					
+	    					ImageView Image01 = (ImageView) findViewById(R.id.imageView1);
 	    					Image01.setImageDrawable(image);
 	    					
 //	    					imagesArray.add(new ImageView(this));
 //	    					imagesArray.get(i).findViewById(R.id.imageView1);
 //	    					imagesArray.get(i).setImageDrawable(image);
-//	    					i++;
-//	    				}
+	    					i++;
+	    				}
 	    	        }
 	    	        catch(Exception ex)
 	    	        {
