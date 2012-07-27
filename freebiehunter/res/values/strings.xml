@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="hello">Thanks For Using The Freebie Hunter!</string>
+    <string name="app_name">Freebiehunter</string>
+    <string name="LocationButton">Location (Hood)</string>
+    <string name="findStuffButton">Find Stuff!</string>
+    
+
+</resources>

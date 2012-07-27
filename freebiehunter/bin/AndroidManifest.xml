@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.dj.craigslistapp"
+    android:versionCode="1"
+    android:versionName="1.0" >
+
+    <uses-sdk android:minSdkVersion="10" />
+    <uses-permission android:name="android.permission.INTERNET"></uses-permission>
+
+    <application
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name" 
+        android:name=".FreebieApp" >
+        <activity
+            android:name=".FreebiehunterActivity"
+            android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" /> 
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:label="Location" android:name="Location"></activity>
+        <activity android:label="CityList" android:name="CityList"></activity>
+        <activity android:label="SubCityList" android:name="SubCityList"></activity>
+        <activity android:label="FindStuff" android:name="FindStuff"></activity>
+        <activity android:label="ListingContent" android:name="ListingContent"></activity>
+        
+    </application>
+
+</manifest>
