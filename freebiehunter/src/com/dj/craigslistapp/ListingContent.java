@@ -8,13 +8,13 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import net.htmlparser.jericho.Segment;
 import net.htmlparser.jericho.Source;
 import net.htmlparser.jericho.StartTag;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.text.method.ScrollingMovementMethod;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -24,7 +24,7 @@ public class ListingContent  extends Activity {
 	private FreebieApp app;
 	TextView tv;
 	ListView lv;
-	ImageView Image01 = null;
+	
     String[] cityNames = new String[50];
     String[] URLS = new String[50];
 	
@@ -43,9 +43,11 @@ public class ListingContent  extends Activity {
 //			lv = (ListView) findViewById(R.id.subcitylist);
 	        
 	        // Set properties 
+			tv.setMovementMethod(new ScrollingMovementMethod());
 	        tv.setText(app.getState() + " - " + app.getCity() + "\n");
 
-
+//	        ImageView Image01 = new ImageView(this);
+	        ImageView Image01 = (ImageView) findViewById(R.id.imageView1);
 	        Source source = getSource();
 
 	        String userbody = source.getElementById("userbody").getContent().toString();
@@ -68,7 +70,10 @@ public class ListingContent  extends Activity {
 	    					String url = it.next().getAttributeValue("src");
 	    					tv.append(url);
 	    					Drawable image =ImageOperations(this,url);
+	    					if( image == null)
+	    						tv.append("this fucked up");
 	    					Image01.setImageDrawable(image);
+	    					
 //	    					imagesArray.add(new ImageView(this));
 //	    					imagesArray.get(i).findViewById(R.id.imageView1);
 //	    					imagesArray.get(i).setImageDrawable(image);
@@ -82,11 +87,11 @@ public class ListingContent  extends Activity {
 
 	    			int width = 300;
 	    			int height = 300;
-	    	        Image01.setMinimumWidth(width);
-	    	        Image01.setMinimumHeight(height);
-
-	    	        Image01.setMaxWidth(width);
-	    	        Image01.setMaxHeight(height);
+//	    	        Image01.setMinimumWidth(width);
+//	    	        Image01.setMinimumHeight(height);
+//
+//	    	        Image01.setMaxWidth(width);
+//	    	        Image01.setMaxHeight(height);
 	        	}
 	        		
 	        }
