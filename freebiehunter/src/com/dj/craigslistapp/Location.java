@@ -35,7 +35,7 @@ public class Location extends Activity {
 			setContentView(R.layout.location);
 			
 			// for getting a message if necessary 
-//			String message = (String) getIntent().getSerializableExtra("message");
+			String message = (String) getIntent().getSerializableExtra("message");
 		    
 			// Find Views 
 			app = (FreebieApp)getApplication();
@@ -44,7 +44,7 @@ public class Location extends Activity {
 			
 	        
 	        // Set properties 
-	        tv.setText("testing.... \n");
+	        tv.setText(message);
 
 	        Source source = null;
 	        String craigsListURL = "http://www.craigslist.org/about/sites";

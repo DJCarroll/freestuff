@@ -7,26 +7,41 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import net.htmlparser.jericho.Source;
 import net.htmlparser.jericho.StartTag;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
+import android.util.Log;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class ListingContent  extends Activity {
 	private static final String TAG = "ListingContentActivity";
 	private FreebieApp app;
 	TextView tv;
-	ListView lv;
+	Button callButton;
+	Button emailButton;
 	
     String[] cityNames = new String[50];
     String[] URLS = new String[50];
+    private String userbody = "";
+	private String returnEmail = "";
+	private String returnPhone = "";
+	private String homeAddress = "";
 	
 	    /** Called when the activity is first created. */
 	    @Override
@@ -40,6 +55,8 @@ public class ListingContent  extends Activity {
 			// Find Views 
 			app = (FreebieApp)getApplication();
 			tv = (TextView) findViewById(R.id.listingcontenttext);
+			callButton = (Button) findViewById(R.id.callButton);
+			emailButton = (Button) findViewById(R.id.emailButton);
 //			lv = (ListView) findViewById(R.id.subcitylist);
 	        
 	        // Set properties 
@@ -50,7 +67,7 @@ public class ListingContent  extends Activity {
 //	        ImageView Image01 = (ImageView) findViewById(R.id.imageView1);
 	        Source source = getSource();
 
-	        String userbody = source.getElementById("userbody").getContent().toString();
+	        userbody = source.getElementById("userbody").getContent().toString();
 	        if(!userbody.equals("") || userbody != null)
 	        {
 	        	if(!app.isPic())
@@ -68,7 +85,7 @@ public class ListingContent  extends Activity {
 	    				while (it.hasNext()) {
 //	    					tv.append(it.next().toString() + "\n");      
 	    					String url = it.next().getAttributeValue("src");
-	    					tv.append(url);
+//	    					tv.append(url);
 	    					Drawable image =ImageOperations(this,url);
 	    					if( image == null)
 	    						tv.append("this fucked up");
@@ -130,27 +147,80 @@ public class ListingContent  extends Activity {
 //	    	        Image01.setMaxWidth(width);
 //	    	        Image01.setMaxHeight(height);
 	        	}
-	        		
+	        
 	        }
 	        else
 	        	tv.append("error");
 	        
+	        returnPhone = "tel:" + getPhone();
+	        returnEmail = source.getFirstElementByClass("returnemail").getFirstElement("a").getContent().toString();
+
+
+	        tv.append(" \n  \n "  + returnEmail  + "\n " + returnPhone + "\n " + homeAddress);
+
+	        // call button clicked
+	        callButton.setOnClickListener(  new OnClickListener() { 	  
+	        	// called when button is clicked
+	        	public void onClick(View v){
+	        		if(!returnPhone.equals(""))
+	        		{
+	        			Log.d(TAG,"onClicked");
+	        			// start call 
+	        			try {
+	        				Intent callIntent = new Intent(Intent.ACTION_CALL);
+	        				callIntent.setData(Uri.parse(returnPhone));
+	        				startActivity(callIntent);
+	        			} catch (Exception e) {
+	        				Log.e(TAG, "Call failed", e);
+	        			}
+	        		}
+	        		else
+	        			Toast.makeText(ListingContent.this, "cant make call as dialed", Toast.LENGTH_SHORT).show();
+	        	}
+	        });
 	        
-//	        
-//			// Listener for city clicked...
-//	        lv.setOnItemClickListener(new OnItemClickListener() {
-//	        	public void onItemClick(AdapterView<?> parent, View view,
-//	        		int position, long id) {
-//	        		app.setCity(app.getCity().concat(" " + cityNames[position]));
-//	        		app.setLocationURL(app.getLocationURL().concat(URLS[position]));
-//	            	Log.d(TAG,"onClicked");
-//	            	Intent i = new Intent(SubCityList.this,FreebiehunterActivity.class);
-//	            	startActivity(i);
-//	        	}
-//	        });
-			
+	        // call button clicked
+	        emailButton.setOnClickListener(  new OnClickListener() { 	  
+	        	// called when button is clicked
+	        	public void onClick(View v){
+	        		if(!returnEmail.equals(""))
+	        		{
+	        			Log.d(TAG,"onClicked");
+	        			// send Email
+	        			Intent i = new Intent(Intent.ACTION_SEND);
+	        			i.setType("plain/text");			//"message/rfc822");
+	        			i.putExtra(Intent.EXTRA_EMAIL  , new String[]{returnEmail});
+	        			i.putExtra(Intent.EXTRA_SUBJECT, "subject of email");			// pull subject ... 
+	        			i.putExtra(Intent.EXTRA_TEXT   , "body of email"); 				 //  eventually ask user for default resonse email
+	        			try {
+	        			    startActivity(Intent.createChooser(i, "Send mail..."));
+	        			} catch (android.content.ActivityNotFoundException ex) {
+	        			    Toast.makeText(ListingContent.this, "There are no email clients installed.", Toast.LENGTH_SHORT).show();
+	        			}			
+	        		}
+	        		else
+	        			Toast.makeText(ListingContent.this, "cant create email to:  " + returnEmail, Toast.LENGTH_SHORT).show();
+
+	        	}
+	        });
+	        
+	        
 	    }
 	    
+	    
+	    
+	    
+	    
+		private String getPhone() {
+        	Pattern p = Pattern.compile("\\d{3}.{0,4}\\d{3}.{0,4}\\d{4}");
+        	Matcher m = p.matcher(userbody);
+        	if(m.find())
+        	{
+        		return m.group().trim().replaceAll("\\D", "");
+        	}
+        	else return "";
+		}
+
 		private Source getSource() {
 
 			Source source = null;

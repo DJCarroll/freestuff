@@ -1,5 +1,10 @@
 package com.dj.craigslistapp;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -29,6 +34,25 @@ public class FreebiehunterActivity extends Activity{
       findStuffButton = (Button) findViewById(R.id.buttonfindStuff);
       tv = (TextView) findViewById(R.id.mainText);
       
+      
+      String FILENAME = "location";
+      byte [] loc = new byte[99];
+      FileInputStream fos = null;
+      if(app.getLocationURL().equals(""))
+      {
+    	  try {
+    		  fos = openFileInput(FILENAME);
+    		  fos.read(loc);
+    		  fos.close();
+    		  app.setLocationURL(new String(loc));
+    	  } catch (FileNotFoundException e1) {
+    		  e1.printStackTrace();
+    	  }
+    	  catch (IOException e) {
+    		  e.printStackTrace();
+    	  }
+      }
+
       // Set Attributes
       locationButton.setOnClickListener(  new OnClickListener() { 	  
       // called when button is clicked

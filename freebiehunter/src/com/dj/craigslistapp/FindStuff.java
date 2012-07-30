@@ -13,6 +13,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
@@ -44,70 +45,86 @@ public class FindStuff extends Activity {
 	        
 	        // Set properties 
 //			tv.setMovementMethod(new ScrollingMovementMethod());
-	        tv.setText("testing.... \n");
+			String loc = app.getLocationURL();
+	        tv.setText(loc);
 
-	        Source source = getSource();
-
-
-	        int i = 0;
-	        List<Element> listings = getListings(source);
-
-// Code to create List of clicakble states. Once clicked, we will show the list of cities to choosefrom.	       
-        
-
-	        Iterator<Element> iterator = listings.iterator();
-	        while (iterator.hasNext()) {
-	        	Segment curr = iterator.next().getContent();
-	        	String post = curr.getFirstElement("a").toString();
-	        	String location = app.getCity();
-	        	if(!curr.getAllElementsByClass("itempn").get(0).isEmpty())
-	        		location = curr.getAllElementsByClass("itempn").get(0).getChildElements().get(0).getContent().toString();
-	        	
-	        	if(curr.getAllElementsByClass("itempx").get(0).isEmpty())
-	        		listingsTitles.add(post.substring(post.indexOf("\">")+2, post.length()-4) + location);
-	        	else
-	        		listingsTitles.add(post.substring(post.indexOf("\">")+2, post.length()-4) + location + "  (PIC) ");
-
-	        	listingsURLS.add(curr.getFirstStartTag("a").getAttributeValue("href"));
-	        	i++;
-	        }
-
-//	     // First paramenter - Context
-//	     // Second parameter - Layout for the row
-//	     // Third parameter - ID of the View to which the data is written
-//	     // Forth - the Array of data
-
-	        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-	        		android.R.layout.simple_list_item_2, android.R.id.text2, listingsTitles);
-
-	        if(adapter == null)
+	        if(loc.trim().isEmpty())
+	        {
 	        	tv.append("fail...");
+	        	Log.d(TAG,"no location found");
+	        	// send to location activity to retrieve location. 
+	        	Bundle b = new Bundle();
+	        	b.putString("message","Please Select a Location ");
+	        	Intent i = new Intent(FindStuff.this,Location.class);
+	        	i.putExtras(b);
+	        	startActivity(i);
+	        }
+	        else
+	        {
+
+		        Source source = getSource();
+
+
+		        int i = 0;
+		        List<Element> listings = getListings(source);
+
+	// Code to create List of clicakble states. Once clicked, we will show the list of cities to choosefrom.	       
 	        
-//	        // Assign adapter to ListView
-	        lv.setAdapter(adapter);
-	        lv.setOnItemClickListener(new OnItemClickListener() {
-	        	public void onItemClick(AdapterView<?> parent, View view,
-	        		int position, long id) {
-	            	Log.d(TAG,"onClicked");
-	            	// send to listings actual page
-	            	if(listingsTitles.get(position).contains("PIC"))
-	            		app.setPic(true);
-	            	else
-	            		app.setPic(false);
-	            	app.setListingURL(listingsURLS.get(position));
-	            	Intent i = new Intent(FindStuff.this,ListingContent.class);
-	            	startActivity(i);
-	        	}
-	        });
-	        
-	        
+
+		        Iterator<Element> iterator = listings.iterator();
+		        while (iterator.hasNext()) {
+		        	Segment curr = iterator.next().getContent();
+		        	String post = curr.getFirstElement("a").toString();
+		        	String location = app.getCity();
+		        	if(!curr.getAllElementsByClass("itempn").get(0).isEmpty())
+		        		location = curr.getAllElementsByClass("itempn").get(0).getChildElements().get(0).getContent().toString();
+		        	
+		        	if(curr.getAllElementsByClass("itempx").get(0).isEmpty())
+		        		listingsTitles.add(post.substring(post.indexOf("\">")+2, post.length()-4) + location);
+		        	else
+		        		listingsTitles.add(post.substring(post.indexOf("\">")+2, post.length()-4) + location + "  (PIC) ");
+
+		        	listingsURLS.add(curr.getFirstStartTag("a").getAttributeValue("href"));
+		        	i++;
+		        }
+
+//		     // First paramenter - Context
+//		     // Second parameter - Layout for the row
+//		     // Third parameter - ID of the View to which the data is written
+//		     // Forth - the Array of data
+
+		        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+		        		android.R.layout.simple_list_item_2, android.R.id.text2, listingsTitles);
+
+		        if(adapter == null)
+		        	tv.append("fail...");
+		        
+//		        // Assign adapter to ListView
+		        lv.setAdapter(adapter);
+		        lv.setOnItemClickListener(new OnItemClickListener() {
+		        	public void onItemClick(AdapterView<?> parent, View view,
+		        		int position, long id) {
+		            	Log.d(TAG,"onClicked");
+		            	// send to listings actual page
+		            	if(listingsTitles.get(position).contains("PIC"))
+		            		app.setPic(true);
+		            	else
+		            		app.setPic(false);
+		            	app.setListingURL(listingsURLS.get(position));
+		            	Intent i = new Intent(FindStuff.this,ListingContent.class);
+		            	startActivity(i);
+		        	}
+		        });
+		        
+	        }
+        
 		}
 	    
 		private Source getSource() {
-			if(!app.findStuffSource)
-			{
+//			if(!app.findStuffSource)
+//			{
 				String craigsListURL = app.getLocationURL().concat("zip/");
-//				tv.append(craigsListURL);
+				tv.append(craigsListURL);
 				Source source = null;
 				try {
 					source = new Source(new URL(craigsListURL));
@@ -120,8 +137,8 @@ public class FindStuff extends Activity {
 				app.setSource(source);
 				app.findStuffSource=true;
 				return source;
-			}
-			else return app.getSource();
+//			}
+//			else return app.getSource();
 
 		}
 

@@ -1,5 +1,8 @@
 package com.dj.craigslistapp;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.List;
 
 import net.htmlparser.jericho.Element;
@@ -50,8 +53,17 @@ public class FreebieApp extends Application {
         public String getLocationURL() {
 			return locationURL;
 		}
-		public void setLocationURL(String locationURL) {
-			this.locationURL = locationURL;
+		public void setLocationURL(String locationURL){
+			this.locationURL = locationURL.trim();
+			String FILENAME = "location";
+			try {				
+				FileOutputStream fos = openFileOutput(FILENAME, this.MODE_PRIVATE);
+				fos.write(this.locationURL.getBytes());
+				fos.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		public List<Element> getState_list() {
 			return state_list;
