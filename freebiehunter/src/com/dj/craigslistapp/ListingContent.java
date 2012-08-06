@@ -4,12 +4,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import net.htmlparser.jericho.Element;
 import net.htmlparser.jericho.Source;
 import net.htmlparser.jericho.StartTag;
 import android.app.Activity;
@@ -22,8 +22,6 @@ import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -76,15 +74,25 @@ public class ListingContent  extends Activity {
 	        	{
 	        		tv.append(userbody.substring(0, userbody.indexOf("<script")));
 	        		
+	        		boolean pic1 = true;
 	    	        List<StartTag> images =  null;
-	    	        ArrayList<ImageView> imagesArray = new ArrayList<ImageView>();
+	    	        List<StartTag> subImages =  null;
+//	S    	        ArrayList<ImageView> imagesArray = new ArrayList<ImageView>();
 	    			try{
 	    				images = source.getElementById("userbody").getAllElementsByClass("iw").get(0).getAllStartTags("img");
-	    				Iterator<StartTag> it = images.iterator();
+	    				subImages = source.getElementById("userbody").getAllElementsByClass("iw").get(0).getAllStartTags("a");
+	    				Iterator<StartTag> it = subImages.iterator();
 	    				int i = 0;
-	    				while (it.hasNext()) {
-//	    					tv.append(it.next().toString() + "\n");      
-	    					String url = it.next().getAttributeValue("src");
+	    				while (it.hasNext() || pic1 == true) {
+//	    					tv.append(it.next().toString() + "\n"); 
+	    					String url;
+	    					if(i==0)
+	    					{
+	    						url = images.get(0).getAttributeValue("src");
+	    						pic1 = false;
+	    					}					
+	    					else
+	    						url = it.next().getAttributeValue("href");
 //	    					tv.append(url);
 	    					Drawable image =ImageOperations(this,url);
 	    					if( image == null)
@@ -139,8 +147,8 @@ public class ListingContent  extends Activity {
 	    	            ex.printStackTrace();
 	    	        }
 
-	    			int width = 300;
-	    			int height = 300;
+//	    			int width = 300;
+//	    			int height = 300;
 //	    	        Image01.setMinimumWidth(width);
 //	    	        Image01.setMinimumHeight(height);
 //
@@ -153,7 +161,10 @@ public class ListingContent  extends Activity {
 	        	tv.append("error");
 	        
 	        returnPhone = "tel:" + getPhone();
-	        returnEmail = source.getFirstElementByClass("returnemail").getFirstElement("a").getContent().toString();
+	        Element email =  source.getFirstElementByClass("returnemail").getFirstElement("a");
+	        if(email != null)
+	        	returnEmail = email.getContent().toString();
+	        else returnEmail = "none";
 
 
 	        tv.append(" \n  \n "  + returnEmail  + "\n " + returnPhone + "\n " + homeAddress);
@@ -183,7 +194,7 @@ public class ListingContent  extends Activity {
 	        emailButton.setOnClickListener(  new OnClickListener() { 	  
 	        	// called when button is clicked
 	        	public void onClick(View v){
-	        		if(!returnEmail.equals(""))
+	        		if(!returnEmail.equals("") && !returnEmail.equals("none"))
 	        		{
 	        			Log.d(TAG,"onClicked");
 	        			// send Email
@@ -208,9 +219,6 @@ public class ListingContent  extends Activity {
 	    }
 	    
 	    
-	    
-	    
-	    
 		private String getPhone() {
         	Pattern p = Pattern.compile("\\d{3}.{0,4}\\d{3}.{0,4}\\d{4}");
         	Matcher m = p.matcher(userbody);
@@ -232,6 +240,15 @@ public class ListingContent  extends Activity {
 				e.printStackTrace();
 				tv.append("\nfail in getting website");
 			}
+			if(source == null)
+			{
+				Toast.makeText(ListingContent.this, "Error in getting content", Toast.LENGTH_SHORT).show();
+				Intent intent = new Intent(this, FinActivity.class);
+				intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+				startActivity(intent);
+				finish();
+			}
+				
 			source.fullSequentialParse();
 			return source;
 

@@ -13,7 +13,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
@@ -65,7 +64,7 @@ public class FindStuff extends Activity {
 		        Source source = getSource();
 
 
-		        int i = 0;
+//		        int i = 0;
 		        List<Element> listings = getListings(source);
 
 	// Code to create List of clicakble states. Once clicked, we will show the list of cities to choosefrom.	       
@@ -85,7 +84,7 @@ public class FindStuff extends Activity {
 		        		listingsTitles.add(post.substring(post.indexOf("\">")+2, post.length()-4) + location + "  (PIC) ");
 
 		        	listingsURLS.add(curr.getFirstStartTag("a").getAttributeValue("href"));
-		        	i++;
+//		        	i++;
 		        }
 
 //		     // First paramenter - Context
@@ -96,8 +95,8 @@ public class FindStuff extends Activity {
 		        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
 		        		android.R.layout.simple_list_item_2, android.R.id.text2, listingsTitles);
 
-		        if(adapter == null)
-		        	tv.append("fail...");
+//		        if(adapter == null)
+//		        	tv.append("fail...");
 		        
 //		        // Assign adapter to ListView
 		        lv.setAdapter(adapter);
